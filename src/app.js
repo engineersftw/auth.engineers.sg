@@ -7,7 +7,10 @@ const logger = require('morgan')
 const cors = require('cors')
 
 const indexRouter = require('./routes/index')
+const authRouter = require('./routes/auth')
 const usersRouter = require('./routes/users')
+
+const passport = require('./passport')
 
 const app = express()
 
@@ -19,6 +22,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
+app.use('/auth', authRouter)
+app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter)
 
 module.exports = app
