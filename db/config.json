@@ -1,11 +1,11 @@
 {
   "development": {
-    "database": "starterkit_development",
+    "database": "esg_auth_development",
     "host": "localhost",
     "dialect": "postgres"
   },
   "test": {
-    "database": "starterkit_test",
+    "database": "esg_auth_test",
     "host": "localhost",
     "dialect": "postgres"
   },
