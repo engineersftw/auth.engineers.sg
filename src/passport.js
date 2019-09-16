@@ -1,6 +1,7 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const GitHubStrategy = require('passport-github2').Strategy
+const TwitterStrategy = require('passport-twitter').Strategy
 
 const passportJWT = require('passport-jwt')
 const JWTStrategy = passportJWT.Strategy
@@ -33,7 +34,7 @@ async function (email, password, cb) {
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: "http://localhost:3001/auth/github/callback"
+  callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/github/callback`
 },
 async function(accessToken, refreshToken, profile, cb) {
   let [ user, err ] = await db.User.findOrCreate({
@@ -51,8 +52,6 @@ async function(accessToken, refreshToken, profile, cb) {
     firstName: profile.displayName
   })
 
-  // profile.username
-
   const jwtPayload = {
     uid: user.id,
     firstName: user.firstName,
@@ -66,7 +65,7 @@ async function(accessToken, refreshToken, profile, cb) {
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: "http://localhost:3001/auth/twitter/callback"
+  callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/twitter/callback`
 },
 async function(token, tokenSecret, profile, cb) {
   let [ user, err ] = await db.User.findOrCreate({
@@ -79,12 +78,10 @@ async function(token, tokenSecret, profile, cb) {
     console.error('Error', err)
   }
 
-  // await user.update({
-  //   email: profile.emails[0].value,
-  //   firstName: profile.displayName
-  // })
-
-  // profile.username
+  await user.update({
+    email: `${profile.username}@twitter-user.engineers.sg`,
+    firstName: profile.displayName
+  })
 
   const jwtPayload = {
     uid: user.id,

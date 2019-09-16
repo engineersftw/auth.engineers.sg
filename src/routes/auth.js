@@ -15,7 +15,6 @@ router.post('/login', function (req, res, next) {
       if (err) {
         res.send(err)
       }
-      // generate a signed son web token with the contents of user object and return it in the response
       const token = jwt.sign(user, process.env.JWT_SECRET)
       return res.json({ user, token })
     })
@@ -38,16 +37,13 @@ router.get('/github/callback', function (req, res, next) {
       if (err) {
         res.send(err)
       }
-      // generate a signed son web token with the contents of user object and return it in the response
       const token = jwt.sign(user, process.env.JWT_SECRET)
       return res.json({ user, token })
     })
   })(req, res)
 })
 
-router.get('/twitter', function (req, res, next) {
-  passport.authenticate('twitter')(req, res)
-})
+router.get('/twitter', passport.authenticate('twitter'))
 
 router.get('/twitter/callback', function (req, res, next) {
   passport.authenticate('twitter', { session: false }, (err, user) => {
@@ -61,7 +57,6 @@ router.get('/twitter/callback', function (req, res, next) {
       if (err) {
         res.send(err)
       }
-      // generate a signed son web token with the contents of user object and return it in the response
       const token = jwt.sign(user, process.env.JWT_SECRET)
       return res.json({ user, token })
     })
