@@ -4,13 +4,20 @@ const jwt = require('jsonwebtoken')
 const passport = require('passport')
 
 function renderSuccess(res, user, token) {
+  const returnURL = 'https://engineers.sg' // TODO: This should be fetching from session.
+  const authCode = 'ABCDEF' // TODO: This should be dynamically generated
+
+  const prefix = returnURL.indexOf('?') > 0 ? '&' : '?'
+  const fullReturnURL = `${returnURL}${prefix}code=${authCode}`
+
   return res.set({
-    'X-JWT-TOKEN': token
+    'X-JWT-TOKEN': token,
   }).render('success', {
     title: 'Engineers.SG - Successful Login',
-    returnURL: 'https://engineers.sg',
+    returnURL: fullReturnURL,
     user: user,
-    token: token
+    token: token,
+    authCode: authCode
   })
 }
 
