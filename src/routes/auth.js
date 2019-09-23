@@ -3,8 +3,8 @@ const router = express.Router()
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 
-function renderSuccess(res, user, token) {
-  const returnURL = 'https://engineers.sg' // TODO: This should be fetching from session.
+function renderSuccess(req, res, user, token) {
+  const returnURL = req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
   const authCode = 'ABCDEF' // TODO: This should be dynamically generated
 
   const prefix = returnURL.indexOf('?') > 0 ? '&' : '?'
@@ -28,7 +28,7 @@ function renderError(res, message, code = 401) {
   })
 }
 
-function loginCallback(res, req, err, user) {
+function loginCallback(req, res, err, user) {
   if (err || !user) {
     return renderError(res, 'Please check your login credentials.')
   }
@@ -37,11 +37,15 @@ function loginCallback(res, req, err, user) {
       return renderError(res, err)
     }
     const token = jwt.sign(user, process.env.JWT_SECRET)
-    return renderSuccess(res, user, token)
+    return renderSuccess(req, res, user, token)
   })
 }
 
 router.get('/', function (req, res, next) {
+  if (req.query.returnURL) {
+    req.session.returnURL = req.query.returnURL
+  }
+
   res.render('check', {
     title: 'Engineers.SG - Checking for user session',
     cancelURL: '/'
@@ -50,7 +54,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
   const result = {
-    returnURL: 'https://engineers.sg' // TODO: This should be fetching from session.
+    returnURL: req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
   }
 
   try {
@@ -66,7 +70,7 @@ router.post('/', function (req, res, next) {
 })
 
 router.post('/login', function (req, res, next) {
-  passport.authenticate('local', { session: false }, (err, user) => loginCallback(res, req, err, user))(req, res)
+  passport.authenticate('local', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
 router.get('/github', function (req, res, next) {
@@ -74,13 +78,13 @@ router.get('/github', function (req, res, next) {
 })
 
 router.get('/github/callback', function (req, res, next) {
-  passport.authenticate('github', { session: false }, (err, user) => loginCallback(res, req, err, user))(req, res)
+  passport.authenticate('github', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
 router.get('/twitter', passport.authenticate('twitter'))
 
 router.get('/twitter/callback', function (req, res, next) {
-  passport.authenticate('twitter', { session: false }, (err, user) => loginCallback(res, req, err, user))(req, res)
+  passport.authenticate('twitter', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
 router.get('/logout', function (req, res, next) {
