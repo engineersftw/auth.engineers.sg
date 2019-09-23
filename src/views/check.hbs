@@ -1,0 +1,49 @@
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-sm-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+      <h4 class="text-center">Checking for logged in user</h4>
+      <p class="mt-3">
+        <a href="{{cancelURL}}">
+          &laquo; Return to previous page
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+<script>
+  function checkToken() {
+    const esgAuthStorage = window.localStorage
+
+    if (!esgAuthStorage.getItem('jwt-token')) {
+      window.location = '/?errCode=NoLocalSession'
+      return
+    }
+
+    const jwtToken = esgAuthStorage.getItem('jwt-token')
+
+    fetch('/auth', {
+      method: 'POST',
+      mode: 'same-origin',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      referrer: 'no-referrer',
+      body: JSON.stringify({token: jwtToken})
+    }).then( response => response.text()
+    ).then( data => {
+      const result = JSON.parse(data)
+      if (result.errorCode) {
+        window.location = '/?errCode=' + result.errorCode
+      } else {
+        const prefix = result.returnURL.indexOf('?') > 0 ? '&' : '?'
+        window.location = `${result.returnURL}${prefix}code=${result.authCode}`
+      }
+    })
+    .catch( err => {
+      window.location = '/?errCode=Others&message=' + err.message
+    })
+  }
+
+  checkToken()
+</script>

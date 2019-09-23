@@ -8,7 +8,7 @@ function renderSuccess(res, user, token) {
     'X-JWT-TOKEN': token
   }).render('success', {
     title: 'Engineers.SG - Successful Login',
-    returnUrl: 'https://engineers.sg',
+    returnURL: 'https://engineers.sg',
     user: user,
     token: token
   })
@@ -34,6 +34,30 @@ function loginCallback(res, req, err, user) {
   })
 }
 
+router.get('/', function (req, res, next) {
+  res.render('check', {
+    title: 'Engineers.SG - Checking for user session',
+    cancelURL: '/'
+  })
+})
+
+router.post('/', function (req, res, next) {
+  const result = {
+    returnURL: 'https://engineers.sg' // TODO: This should be fetching from session.
+  }
+
+  try {
+    var decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
+    result.authCode = 'ABCDEF' // TODO: This should be dynamically generated
+  } catch(err) {
+    result.errCode = 'InvalidToken'
+    result.message = 'Invalid token found'
+    res.status(401)
+  }
+
+  res.json(result)
+})
+
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', { session: false }, (err, user) => loginCallback(res, req, err, user))(req, res)
 })
@@ -50,6 +74,13 @@ router.get('/twitter', passport.authenticate('twitter'))
 
 router.get('/twitter/callback', function (req, res, next) {
   passport.authenticate('twitter', { session: false }, (err, user) => loginCallback(res, req, err, user))(req, res)
+})
+
+router.get('/logout', function (req, res, next) {
+  res.render('logout', {
+    title: 'Engineers.SG - Logging Out',
+    returnURL: '/'
+  })
 })
 
 module.exports = router

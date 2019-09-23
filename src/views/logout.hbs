@@ -1,8 +1,7 @@
 <div class="container mt-3">
   <div class="row">
     <div class="col-sm-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center">
-      <h4>Successfully logged in!</h4>
-      <h5>Welcome back {{user.firstName}}</h5>
+      <h4>Logging you out...</h4>
       <p class="mt-3">
         <a href="{{returnURL}}" class="btn btn-success btn-lg" role="button" aria-disabled="true">
           Return to Engineers.SG &raquo;
@@ -14,7 +13,6 @@
 <script>
   const esgAuthStorage = window.localStorage
   esgAuthStorage.clear()
-  esgAuthStorage.setItem('jwt-token', "{{token}}")
   setTimeout(() => {
     window.location = "{{returnURL}}"
   }, 3000)
