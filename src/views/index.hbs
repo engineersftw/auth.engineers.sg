@@ -5,7 +5,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-12 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+    <div class="col-sm-12 col-md-6 offset-md-3">
       <form action="/auth/login" method="post">
         <div class="form-group">
           <label for="emailField">Email address</label>
@@ -17,8 +17,18 @@
           <input type="password" class="form-control" id="passwordField" name="password" placeholder="Password">
         </div>
 
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary btn-lg">Login</button>
       </form>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-6 offset-md-3 text-center">
+      <a href="/auth/github" class="btn btn-secondary bg-github btn-lg" role="button" aria-disabled="true">
+        <i class="fa fa-github"></i> Login with GitHub
+      </a>
+      <a href="/auth/twitter" class="btn btn-secondary bg-twitter btn-lg" role="button" aria-disabled="true">
+        <i class="fa fa-twitter"></i> Login with Twitter
+      </a>
     </div>
   </div>
 </div>
