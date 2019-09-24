@@ -28,8 +28,8 @@ function displayErrorMessage (errCode, customMessage = '') {
 }
 
 router.get('/', function (req, res, next) {
-  if (req.query.returnURL) {
-    req.session.returnURL = req.query.returnURL
+  if (req.query.redirect_uri) {
+    req.session.returnURL = req.query.redirect_uri
   }
 
   const pageData = { title: 'Engineers.SG' }
