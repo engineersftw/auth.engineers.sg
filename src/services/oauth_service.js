@@ -1,8 +1,13 @@
 const db = require('../models/index')
 const crypto = require('crypto')
 const moment = require('moment')
+const jwt = require('jsonwebtoken')
 
 class OauthService {
+  constructor (options = {}) {
+    this.JWT_SECRET = options['JWT_SECRET'] || process.env.JWT_SECRET
+  }
+
   static generateHash() {
     return crypto.randomBytes(20).toString('hex')
   }
@@ -45,6 +50,14 @@ class OauthService {
           token: token
         }
       })
+  }
+
+  verifyJWT (token) {
+    return jwt.verify(token, this.JWT_SECRET)
+  }
+
+  signJWT (payload) {
+    return jwt.sign(payload, this.JWT_SECRET)
   }
 }
 

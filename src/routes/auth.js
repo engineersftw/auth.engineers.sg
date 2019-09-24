@@ -3,6 +3,9 @@ const router = express.Router()
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const db = require('../models/index')
+const OauthService = require('../services/oauth_service')
+
+const oauthService = new OauthService()
 
 function renderSuccess (req, res, user, token) {
   const returnURL = req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
@@ -47,13 +50,13 @@ router.get('/', async function (req, res, next) {
     return res.redirect('/?errCode=MissingClientId')
   }
 
+  const result = {
+    title: 'Engineers.SG - Checking for user session',
+    cancelURL: '/'
+  }
+
   try {
-    const oauthApp = await db.OauthApp
-      .findOne({
-        where: {
-          clientId: req.query.client_id
-        }
-      })
+    const oauthApp = await oauthService.fetchApp(req.query.client_id)
 
     if (!oauthApp) {
       return res.redirect('/?errCode=MissingClientId')
@@ -64,24 +67,26 @@ router.get('/', async function (req, res, next) {
     } else {
       req.session.returnURL = req.query.redirect_uri
     }
+
+    result.oauthApp = oauthApp
   } catch (err) {
     return res.redirect('/?errCode=Others&message=' + err.message)
   }
 
-  res.render('check', {
-    title: 'Engineers.SG - Checking for user session',
-    cancelURL: '/'
-  })
+  res.render('check', result)
 })
 
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
   const result = {
     returnURL: req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
   }
 
   try {
-    var decoded = jwt.verify(req.body.token, process.env.JWT_SECRET)
-    result.authCode = 'ABCDEF' // TODO: This should be dynamically generated
+    const userData = oauthService.verifyJWT(req.body.token)
+    const oauthApp = await oauthService.fetchApp(req.body.clientId)
+    const newAuthToken = await oauthService.createAuthToken(oauthApp, userData.uid)
+
+    result.authCode = newAuthToken.token
   } catch (err) {
     result.errCode = 'InvalidToken'
     result.message = 'Invalid token found'

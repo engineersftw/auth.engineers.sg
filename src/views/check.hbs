@@ -29,7 +29,7 @@
         'Content-Type': 'application/json'
       },
       referrer: 'no-referrer',
-      body: JSON.stringify({token: jwtToken})
+      body: JSON.stringify({token: jwtToken, clientId: '{{oauthApp.clientId}}', returnUri: '{{{oauthApp.returnUri}}}'})
     }).then( response => response.text()
     ).then( data => {
       const result = JSON.parse(data)
