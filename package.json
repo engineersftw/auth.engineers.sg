@@ -29,6 +29,7 @@
     "express-session": "^1.16.2",
     "hbs": "^4.0.4",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
     "passport-github2": "^0.1.11",

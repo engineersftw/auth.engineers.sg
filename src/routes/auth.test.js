@@ -21,7 +21,7 @@ describe('/auth endpoints', () => {
     })
 
     afterEach(async () => {
-      await oauthApp.destroy()
+      await db.sequelize.query('truncate table "OauthApps"')
     })
 
     test('Auth loads check page', (done) => {
