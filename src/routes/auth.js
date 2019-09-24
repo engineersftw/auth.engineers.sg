@@ -41,9 +41,30 @@ function loginCallback(req, res, err, user) {
   })
 }
 
-router.get('/', function (req, res, next) {
-  if (req.query.returnURL) {
-    req.session.returnURL = req.query.returnURL
+router.get('/', async function (req, res, next) {
+  if (!req.query.client_id) {
+    return res.redirect('/?errCode=MissingClientId')
+  }
+
+  try {
+    const oauthApp = await db.OauthApp
+      .findOne({
+        where: {
+          clientId: req.query.client_id
+        }
+      })
+
+    if (!oauthApp) {
+      return res.redirect('/?errCode=MissingClientId')
+    }
+
+    if (!req.query.redirect_uri || oauthApp.redirectUri !== req.query.redirect_uri) {
+      return res.redirect('/?errCode=MissingRedirectUri')
+    } else {
+      req.session.returnURL = req.query.redirect_uri
+    }
+  } catch (err) {
+    return res.redirect('/?errCode=Others&message=' + err.message)
   }
 
   res.render('check', {

@@ -1,15 +1,21 @@
 const express = require('express')
 const router = express.Router()
 
-function displayErrorMessage(errCode, customMessage = '') {
+function displayErrorMessage (errCode, customMessage = '') {
   let message = ''
   switch (errCode) {
     case 'NoLocalSession':
       message = 'Please login to your account'
       break
     case 'InvalidToken':
-        message = 'Invalid token found. Please login again.'
-        break
+      message = 'Invalid token found. Please login again.'
+      break
+    case 'MissingClientId':
+      message = 'Please include a valid client ID in the request'
+      break
+    case 'MissingRedirectUri':
+      message = 'Please include a valid redirect URI in the request'
+      break
     case 'Others':
       message = customMessage
       break
