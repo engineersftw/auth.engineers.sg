@@ -36,8 +36,8 @@ passport.use(new GitHubStrategy({
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/github/callback`
 },
-async function(accessToken, refreshToken, profile, cb) {
-  let [ user, err ] = await db.User.findOrCreate({
+async function (accessToken, refreshToken, profile, cb) {
+  const [user, err] = await db.User.findOrCreate({
     where: {
       githubProfileId: profile.id
     }
@@ -67,8 +67,8 @@ passport.use(new TwitterStrategy({
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
   callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/twitter/callback`
 },
-async function(token, tokenSecret, profile, cb) {
-  let [ user, err ] = await db.User.findOrCreate({
+async function (token, tokenSecret, profile, cb) {
+  const [user, err] = await db.User.findOrCreate({
     where: {
       twitterProfileId: profile.id
     }
@@ -91,7 +91,7 @@ async function(token, tokenSecret, profile, cb) {
 
   return cb(null, jwtPayload)
 }
-));
+))
 
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),

@@ -2,8 +2,9 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
+const db = require('../models/index')
 
-function renderSuccess(req, res, user, token) {
+function renderSuccess (req, res, user, token) {
   const returnURL = req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
   const authCode = 'ABCDEF' // TODO: This should be dynamically generated
 
@@ -11,7 +12,7 @@ function renderSuccess(req, res, user, token) {
   const fullReturnURL = `${returnURL}${prefix}code=${authCode}`
 
   return res.set({
-    'X-JWT-TOKEN': token,
+    'X-JWT-TOKEN': token
   }).render('success', {
     title: 'Engineers.SG - Successful Login',
     returnURL: fullReturnURL,
@@ -21,14 +22,14 @@ function renderSuccess(req, res, user, token) {
   })
 }
 
-function renderError(res, message, code = 401) {
+function renderError (res, message, code = 401) {
   return res.status(code).render('index', {
     title: 'Engineers.SG - Login Failure',
     errMessage: message
   })
 }
 
-function loginCallback(req, res, err, user) {
+function loginCallback (req, res, err, user) {
   if (err || !user) {
     return renderError(res, 'Please check your login credentials.')
   }
@@ -79,9 +80,9 @@ router.post('/', function (req, res, next) {
   }
 
   try {
-    var decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
+    var decoded = jwt.verify(req.body.token, process.env.JWT_SECRET)
     result.authCode = 'ABCDEF' // TODO: This should be dynamically generated
-  } catch(err) {
+  } catch (err) {
     result.errCode = 'InvalidToken'
     result.message = 'Invalid token found'
     res.status(401)
@@ -95,7 +96,7 @@ router.post('/login', function (req, res, next) {
 })
 
 router.get('/github', function (req, res, next) {
-  passport.authenticate('github', { scope: [ 'user:email' ] })(req, res)
+  passport.authenticate('github', { scope: ['user:email'] })(req, res)
 })
 
 router.get('/github/callback', function (req, res, next) {

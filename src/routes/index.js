@@ -34,7 +34,7 @@ router.get('/', function (req, res, next) {
 
   const pageData = { title: 'Engineers.SG' }
   if (req.query.errCode) {
-    pageData.errMessage = displayErrorMessage(errCode, req.query.message)
+    pageData.errMessage = displayErrorMessage(req.query.errCode, req.query.message)
   }
   res.render('index', pageData)
 })
