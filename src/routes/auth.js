@@ -17,6 +17,8 @@ function renderSuccess (req, res, user, token, authCode) {
     fullReturnURL = `${returnURL}${prefix}code=${authCode}`
   }
 
+  req.session.destroy()
+
   // Saves a new JWT Token
   return res.set({
     'X-JWT-TOKEN': token
@@ -40,7 +42,7 @@ function loginCallback (req, res, err, user) {
   if (err || !user) {
     return renderError(res, 'Please check your login credentials.')
   }
-  req.login(user, { session: false }, (err) => {
+  req.login(user, { session: false }, async (err) => {
     if (err) {
       return renderError(res, err)
     }
@@ -56,8 +58,6 @@ function loginCallback (req, res, err, user) {
         return renderError(res, err)
       }
     }
-
-    req.session.destroy()
 
     const token = oauthService.signJWT(user)
     return renderSuccess(req, res, user, token, authCode)
@@ -89,6 +89,8 @@ router.get('/', async function (req, res, next) {
     } else {
       req.session.returnURL = req.query.redirect_uri
     }
+
+    req.session.clientId = oauthApp.clientId
 
     result.oauthApp = oauthApp
   } catch (err) {

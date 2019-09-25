@@ -41,7 +41,7 @@ async function fetchOauthApp (clientId) {
   return null
 }
 
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   if (req.query.redirect_uri) {
     req.session.returnURL = req.query.redirect_uri
   }
