@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
+const OauthService = require('../services/oauth_service')
+const oauthService = new OauthService()
+
 function displayErrorMessage (errCode, customMessage = '') {
   let message = ''
   switch (errCode) {
@@ -27,9 +30,29 @@ function displayErrorMessage (errCode, customMessage = '') {
   return message
 }
 
+async function fetchOauthApp (clientId) {
+  try {
+    const oauthApp = await oauthService.fetchApp(clientId)
+    if (oauthApp) { return oauthApp }
+  } catch (err) {
+    console.log(err)
+  }
+
+  return null
+}
+
 router.get('/', function (req, res, next) {
   if (req.query.redirect_uri) {
     req.session.returnURL = req.query.redirect_uri
+  }
+
+  if (req.query.client_id) {
+    const oauthApp = await fetchOauthApp(req.query.client_id)
+
+    if (oauthApp) {
+      req.session.clientId = oauthApp.clientId
+      req.session.returnURL = oauthApp.redirect_uri
+    }
   }
 
   const pageData = { title: 'Engineers.SG' }

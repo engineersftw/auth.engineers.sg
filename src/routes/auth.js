@@ -3,17 +3,21 @@ const router = express.Router()
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const db = require('../models/index')
-const OauthService = require('../services/oauth_service')
 
+const OauthService = require('../services/oauth_service')
 const oauthService = new OauthService()
 
-function renderSuccess (req, res, user, token) {
+function renderSuccess (req, res, user, token, authCode) {
   const returnURL = req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
-  const authCode = 'ABCDEF' // TODO: This should be dynamically generated
 
-  const prefix = returnURL.indexOf('?') > 0 ? '&' : '?'
-  const fullReturnURL = `${returnURL}${prefix}code=${authCode}`
+  let fullReturnURL = returnURL
+  if (authCode.length > 0) {
 
+    const prefix = returnURL.indexOf('?') > 0 ? '&' : '?'
+    fullReturnURL = `${returnURL}${prefix}code=${authCode}`
+  }
+
+  // Saves a new JWT Token
   return res.set({
     'X-JWT-TOKEN': token
   }).render('success', {
@@ -40,11 +44,29 @@ function loginCallback (req, res, err, user) {
     if (err) {
       return renderError(res, err)
     }
-    const token = jwt.sign(user, process.env.JWT_SECRET)
-    return renderSuccess(req, res, user, token)
+
+    let authCode = ''
+    if (req.session.clientId) {
+      try {
+        const oauthApp = await oauthService.fetchApp(req.session.clientId)
+        const newAuthToken = await oauthService.createAuthToken(oauthApp, user.uid)
+
+        authCode = newAuthToken.token
+      } catch (err) {
+        return renderError(res, err)
+      }
+    }
+
+    req.session.destroy()
+
+    const token = oauthService.signJWT(user)
+    return renderSuccess(req, res, user, token, authCode)
   })
 }
 
+// Check for existing JWT token in LocalStorage
+// - If valid JWT exists, create AuthToken & redirect to return_uri
+// - Otherwise redirect to login form
 router.get('/', async function (req, res, next) {
   if (!req.query.client_id) {
     return res.redirect('/?errCode=MissingClientId')
@@ -76,6 +98,8 @@ router.get('/', async function (req, res, next) {
   res.render('check', result)
 })
 
+// Checks the JWT token from LocalStorage
+// If valid, create AuthToken and return to client
 router.post('/', async function (req, res, next) {
   const result = {
     returnURL: req.session.returnURL || process.env.DEFAULT_RETURN_URL || 'https://engineers.sg'
@@ -93,13 +117,22 @@ router.post('/', async function (req, res, next) {
     res.status(401)
   }
 
-  res.json(result)
+  req.session.destroy((err) => {
+    res.json(result)
+  })
 })
 
+// Exchange the AuthToken for a JWT Access Token
+router.post('/token', function (req, res, next) {
+  res.json({})
+})
+
+// Email Login action
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
+// Start GitHub Login
 router.get('/github', function (req, res, next) {
   passport.authenticate('github', { scope: ['user:email'] })(req, res)
 })
@@ -108,12 +141,14 @@ router.get('/github/callback', function (req, res, next) {
   passport.authenticate('github', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
+// Start Twitter Login
 router.get('/twitter', passport.authenticate('twitter'))
 
 router.get('/twitter/callback', function (req, res, next) {
   passport.authenticate('twitter', { session: false }, (err, user) => loginCallback(req, res, err, user))(req, res)
 })
 
+// Clears LocalStorage of any tokens
 router.get('/logout', function (req, res, next) {
   res.render('logout', {
     title: 'Engineers.SG - Logging Out',
