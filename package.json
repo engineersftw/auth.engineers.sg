@@ -7,7 +7,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "jsfmt": "eslint \"src/**/*.js\" --fix",
-    "jslint": "eslint \"src/**/*.js\""
+    "jslint": "eslint \"src/**/*.js\"",
+    "db:create": "./node_modules/.bin/sequelize db:create",
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate"
   },
   "repository": {
     "type": "git",
