@@ -155,9 +155,11 @@ router.get('/twitter/callback', function (req, res, next) {
 
 // Clears LocalStorage of any tokens
 router.get('/logout', function (req, res, next) {
-  res.render('logout', {
-    title: 'Engineers.SG - Logging Out',
-    returnURL: '/'
+  req.session.destroy((err) => {
+    res.render('logout', {
+      title: 'Engineers.SG - Logging Out',
+      returnURL: '/'
+    })
   })
 })
 
