@@ -105,6 +105,8 @@ With this JSON payload:
   "redirect_uri": "https://example-app.com/callback"
 }
 ```
+
+The `code_verifier` should be the same as the `code_challenge` used in step 2.
     
 You will receive this JSON response:
     
