@@ -1,9 +1,11 @@
 # Usage Guide
 
-- For microservices
-- For Oauth Apps
+- [For Oauth Apps](#for-oauth-apps)
+- [For microservices](#for-microservices)
 
-## Getting a User Access Token (Authorization Token Grant)
+## For Oauth Apps
+
+### Getting a User Access Token (Authorization Token Grant)
 
 1. Request for an Oauth2 App. You will be issued a `client_id` and `client_secret`. Do define your `redirect_uri` where we will send you the `authorization_code`.
 
@@ -62,11 +64,13 @@
     }
     ```
 
-## For Single Page Apps
+---
+
+### For Single Page Apps
 
 Use the [Proof Key for Code Exchange](https://oauth.net/2/pkce/) to exchange your token. This is similar to the Oauth 2 Authorization Token Grant with these differences:
 
-### Step 2: Get user permission:
+#### Step 2: Get user permission:
 
 - Redirect your users to the following address:
 
@@ -85,7 +89,7 @@ Use the [Proof Key for Code Exchange](https://oauth.net/2/pkce/) to exchange you
     - `scope` (optional) - One or more space-separated strings indicating which permissions the application is requesting. Default: `default`.
     - `state` (optional) - The application generates a random string and includes it in the request. It should then check that the same value is returned after the user authorizes the app. This is used to prevent CSRF attacks.
 
-### Step 4: Exchange for Access Token
+#### Step 4: Exchange for Access Token
 
 Exchange your Authorization Token for the `access_token`. This will be a [JWT](https://jwt.io) token.
 
@@ -118,3 +122,7 @@ You will receive this JSON response:
   "scope":"default"
 }
 ```
+
+## For microservices
+
+To be confirmed
