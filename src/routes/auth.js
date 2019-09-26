@@ -126,6 +126,9 @@ router.post('/', async function (req, res, next) {
 
 // Exchange the AuthToken for a JWT Access Token
 router.post('/token', function (req, res, next) {
+  const { client_id, client_secret, code, redirect_uri } = req.body
+
+
   res.json({})
 })
 
