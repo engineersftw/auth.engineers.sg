@@ -1,7 +1,17 @@
 # Usage Guide
 
+- [Making API Calls](#making-api-calls)
 - [For Oauth Apps](#for-oauth-apps)
 - [For microservices](#for-microservices)
+
+## Making API Calls
+
+Include the `Authorization` header with value: `Bearer XXXXXX` (where `XXXXXX` is the [JWT](https://jwt.io) token).
+
+```
+curl -H "Authorization: Bearer <JWT Tokten>" \
+https://auth.engineers.sg/auth/verify
+```
 
 ## For Oauth Apps
 
@@ -125,4 +135,29 @@ You will receive this JSON response:
 
 ## For microservices
 
-To be confirmed
+Make a JSON POST to the following URL:
+
+```
+https://auth.engineers.sg/auth/token
+```
+
+With this JSON payload:
+
+```json
+{
+  "grant_type": "client_credentials",
+  "client_id": "XXXXXXXX",
+  "client_secret": "XXXXXXXX"
+}
+```
+
+You will receive this JSON response:
+    
+```json
+{
+  "access_token":"XXXXXXXX.XXXXXXXX.XXXXXXXX",
+  "token_type":"bearer",
+  "expires_in":3600,
+  "scope":"default"
+}
+```
