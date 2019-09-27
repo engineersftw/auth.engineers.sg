@@ -8,18 +8,37 @@
       "type": "node",
       "request": "launch",
       "name": "Start App",
-      "program": "${workspaceFolder}/bin/www"
+      "program": "${workspaceFolder}/bin/www",
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Run Test",
+      "name": "Jest All",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
-        "-i",
+        "--runInBand",
         "--detectOpenHandles"
       ],
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      }
     }
   ]
 }
