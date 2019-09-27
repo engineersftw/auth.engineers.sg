@@ -9,6 +9,17 @@
       "request": "launch",
       "name": "Start App",
       "program": "${workspaceFolder}/bin/www"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "-i",
+        "--detectOpenHandles"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }
