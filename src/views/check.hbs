@@ -18,9 +18,16 @@
       window.location = '/?errCode=NoLocalSession'
       return
     }
-
     const jwtToken = esgAuthStorage.getItem('jwt-token')
 
+    const oauthPayload = {
+      {{#each oauth}}
+        {{@key}}: '{{this}}',
+      {{/each}}
+    }
+
+    oauthPayload.token = jwtToken
+    
     fetch('/auth', {
       method: 'POST',
       mode: 'same-origin',
@@ -29,15 +36,14 @@
         'Content-Type': 'application/json'
       },
       referrer: 'no-referrer',
-      body: JSON.stringify({token: jwtToken, clientId: '{{oauthApp.clientId}}', returnUri: '{{{oauthApp.returnUri}}}'})
+      body: JSON.stringify(oauthPayload)
     }).then( response => response.text()
     ).then( data => {
       const result = JSON.parse(data)
       if (result.errorCode) {
         window.location = '/?errCode=' + result.errorCode
       } else {
-        const prefix = result.returnURL.indexOf('?') > 0 ? '&' : '?'
-        window.location = `${result.returnURL}${prefix}code=${result.authCode}`
+        window.location = result.returnURL
       }
     })
     .catch( err => {

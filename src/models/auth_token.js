@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     active: DataTypes.BOOLEAN
   }, {})
   AuthToken.associate = function (models) {
-    models.AuthToken.belongsTo(models.User, {foreignKey: 'userId'})
+    models.AuthToken.belongsTo(models.User, { foreignKey: 'userId' })
   }
   return AuthToken
 }

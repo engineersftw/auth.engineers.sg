@@ -8,7 +8,7 @@ class OauthService {
     this.JWT_SECRET = options['JWT_SECRET'] || process.env.JWT_SECRET
   }
 
-  static generateHash() {
+  static generateHash () {
     return crypto.randomBytes(20).toString('hex')
   }
 

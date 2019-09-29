@@ -37,8 +37,8 @@ if (process.env.NODE_ENV === 'test') {
   const redis = require('redis')
   const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379'
 
-  let RedisStore = require('connect-redis')(session)
-  let redisclient = redis.createClient(REDIS_URL)
+  const RedisStore = require('connect-redis')(session)
+  const redisclient = redis.createClient(REDIS_URL)
 
   app.use(
     session({

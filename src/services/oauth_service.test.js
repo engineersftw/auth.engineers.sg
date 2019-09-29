@@ -19,8 +19,8 @@ describe('OauthService', () => {
 
   describe('#createApp', () => {
     test('Creates new Oauth app', async () => {
-      const name = 'ESG CMS',
-            redirectUri = 'https://cms.engineers.sg/auth/callback'
+      const name = 'ESG CMS'
+      const redirectUri = 'https://cms.engineers.sg/auth/callback'
       const result = await subject.createApp(name, redirectUri)
 
       expect(result).toBeTruthy()
@@ -32,8 +32,8 @@ describe('OauthService', () => {
 
   describe('with existing app', () => {
     let newApp
-    const name = 'ESG CMS',
-          redirectUri = 'https://cms.engineers.sg/auth/callback'
+    const name = 'ESG CMS'
+    const redirectUri = 'https://cms.engineers.sg/auth/callback'
 
     beforeEach(async () => {
       newApp = await subject.createApp(name, redirectUri)
@@ -86,4 +86,3 @@ describe('OauthService', () => {
     })
   })
 })
-

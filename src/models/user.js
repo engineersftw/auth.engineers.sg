@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     twitterProfileId: DataTypes.STRING
   }, {})
   User.associate = function (models) {
-    models.User.hasMany(models.AuthToken, {foreignKey: 'userId'})
+    models.User.hasMany(models.AuthToken, { foreignKey: 'userId' })
   }
   return User
 }

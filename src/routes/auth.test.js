@@ -20,9 +20,8 @@ describe('/auth endpoints', () => {
   })
 
   describe('Positive case', () => {
-    let oauthApp
     beforeEach(async () => {
-      oauthApp = await db.OauthApp.create({
+      await db.OauthApp.create({
         name: 'My App',
         clientId: '12345',
         clientSecret: 'my_secret',
@@ -38,7 +37,7 @@ describe('/auth endpoints', () => {
   })
 
   describe('POST /auth/token', () => {
-    let oauthApp, newUser, authToken, codeVerifier = 'my_code_verifier'
+    let oauthApp; let newUser; let authToken; const codeVerifier = 'my_code_verifier'
 
     beforeEach(async () => {
       oauthApp = await db.OauthApp.create({

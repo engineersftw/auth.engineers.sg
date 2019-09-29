@@ -42,22 +42,29 @@ async function fetchOauthApp (clientId) {
 }
 
 router.get('/', async function (req, res, next) {
-  if (req.query.redirect_uri) {
-    req.session.returnURL = req.query.redirect_uri
+  const { clientId, redirectUri, state, codeVerifier, scope } = req.query
+
+  if (redirectUri) {
+    req.session.returnURL = redirectUri
   }
 
-  if (req.query.client_id) {
-    const oauthApp = await fetchOauthApp(req.query.client_id)
+  if (clientId) {
+    const oauthApp = await fetchOauthApp(clientId)
 
     if (oauthApp) {
       req.session.clientId = oauthApp.clientId
-      req.session.returnURL = oauthApp.redirect_uri
+      req.session.returnURL = oauthApp.redirectUri
+
+      if (state) { req.session.state = state }
+      if (codeVerifier) { req.session.state = codeVerifier }
+      if (scope) { req.session.scope = scope }
     }
   }
 
   const pageData = { title: 'Engineers.SG' }
-  if (req.query.errCode) {
-    pageData.errMessage = displayErrorMessage(req.query.errCode, req.query.message)
+  const { errCode, message } = req.query
+  if (errCode) {
+    pageData.errMessage = displayErrorMessage(errCode, message)
   }
   res.render('index', pageData)
 })
