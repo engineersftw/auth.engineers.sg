@@ -68,9 +68,7 @@ function loginCallback (req, res, err, user) {
 // - If valid JWT exists, create AuthToken & redirect to return_uri
 // - Otherwise redirect to login form
 router.get('/', async function (req, res, next) {
-  if (!req.query.client_id) {
-    return res.redirect('/?errCode=MissingClientId')
-  }
+  const { client_id, redirect_uri, code_challenge, scope, state } = req.query
 
   const result = {
     title: 'Engineers.SG - Checking for user session',
@@ -78,16 +76,19 @@ router.get('/', async function (req, res, next) {
   }
 
   try {
-    const oauthApp = await oauthService.fetchApp(req.query.client_id)
+    if (!client_id) {
+      return res.redirect('/?errCode=MissingClientId')
+    }
 
+    const oauthApp = await oauthService.fetchApp(client_id)
     if (!oauthApp) {
       return res.redirect('/?errCode=MissingClientId')
     }
 
-    if (!req.query.redirect_uri || oauthApp.redirectUri !== req.query.redirect_uri) {
+    if (!redirect_uri || oauthApp.redirectUri !== redirect_uri) {
       return res.redirect('/?errCode=MissingRedirectUri')
     } else {
-      req.session.returnURL = req.query.redirect_uri
+      req.session.returnURL = redirect_uri
     }
 
     req.session.clientId = oauthApp.clientId
