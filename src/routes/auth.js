@@ -147,13 +147,12 @@ router.post('/token', async function (req, res, next) {
     }
 
     const authToken = await oauthService.fetchAuthToken(client_id, code)
+    if (!authToken) {
+      throw new Error('Invalid code')
+    }
 
     if (code_verifier && authToken.codeVerifier !== code_verifier) {
       throw new Error('Invalid code verifier')
-    }
-
-    if (!authToken) {
-      throw new Error('Invalid code')
     }
 
     const user = await authToken.getUser()

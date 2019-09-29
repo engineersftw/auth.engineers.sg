@@ -185,5 +185,24 @@ describe('/auth endpoints', () => {
           done()
         })
     })
+
+    test('Missing code verifier & client secret', (done) => {
+      request(app)
+        .post('/auth/token')
+        .send({
+          client_id: oauthApp.clientId,
+          code: authToken.token,
+          redirect_uri: oauthApp.redirectUri
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .then(response => {
+          expect(Object.keys(response.body)).toEqual(['errCode', 'message'])
+          expect(response.body.message).toEqual('Invalid client credentials')
+
+          done()
+        })
+    })
   })
 })
