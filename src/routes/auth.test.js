@@ -38,7 +38,7 @@ describe('/auth endpoints', () => {
   })
 
   describe('POST /auth/token', () => {
-    let oauthApp, newUser, authToken
+    let oauthApp, newUser, authToken, codeVerifier = 'my_code_verifier'
 
     beforeEach(async () => {
       oauthApp = await db.OauthApp.create({
@@ -52,7 +52,8 @@ describe('/auth endpoints', () => {
         lastName: 'Kat',
         email: 'sillykat@example.com'
       })
-      authToken = await oauthService.createAuthToken(oauthApp, newUser.id)
+
+      authToken = await oauthService.createAuthToken(oauthApp, newUser.id, codeVerifier)
     })
 
     test('Exchange for access token', (done) => {
@@ -61,6 +62,31 @@ describe('/auth endpoints', () => {
         .send({
           client_id: oauthApp.clientId,
           client_secret: oauthApp.clientSecret,
+          code: authToken.token,
+          redirect_uri: oauthApp.redirectUri
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then(response => {
+          expect(response.body.access_token.length).toBeGreaterThan(0)
+          expect(Object.keys(response.body)).toEqual(['access_token', 'token_type', 'expires_in', 'scope'])
+
+          const jwtPayload = oauthService.verifyJWT(response.body.access_token)
+          expect(jwtPayload.uid).toEqual(newUser.id)
+          expect(jwtPayload.firstName).toEqual(newUser.firstName)
+          expect(jwtPayload.lastName).toEqual(newUser.lastName)
+
+          done()
+        })
+    })
+
+    test('Exchange for access token with code_verifier', (done) => {
+      request(app)
+        .post('/auth/token')
+        .send({
+          client_id: oauthApp.clientId,
+          code_verifier: codeVerifier,
           code: authToken.token,
           redirect_uri: oauthApp.redirectUri
         })
@@ -120,7 +146,7 @@ describe('/auth endpoints', () => {
         })
     })
 
-    test('Invalid Redirect URI', (done) => {
+    test('Invalid Auth Token', (done) => {
       request(app)
         .post('/auth/token')
         .send({
@@ -135,6 +161,26 @@ describe('/auth endpoints', () => {
         .then(response => {
           expect(Object.keys(response.body)).toEqual(['errCode', 'message'])
           expect(response.body.message).toEqual('Invalid code')
+
+          done()
+        })
+    })
+
+    test('Invalid Code Verfier', (done) => {
+      request(app)
+        .post('/auth/token')
+        .send({
+          client_id: oauthApp.clientId,
+          code_verifier: 'invalid_verifier',
+          code: authToken.token,
+          redirect_uri: oauthApp.redirectUri
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .then(response => {
+          expect(Object.keys(response.body)).toEqual(['errCode', 'message'])
+          expect(response.body.message).toEqual('Invalid code verifier')
 
           done()
         })

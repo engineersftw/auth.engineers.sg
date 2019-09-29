@@ -126,7 +126,7 @@ router.post('/', async function (req, res, next) {
 
 // Exchange the AuthToken for a JWT Access Token
 router.post('/token', async function (req, res, next) {
-  const { client_id, client_secret, code, redirect_uri } = req.body
+  const { client_id, client_secret, code, redirect_uri, code_verifier } = req.body
 
   let result = {
     access_token: '',
@@ -138,7 +138,7 @@ router.post('/token', async function (req, res, next) {
   try {
     const oauthApp = await oauthService.fetchApp(client_id)
 
-    if (oauthApp.clientSecret !== client_secret) {
+    if (!code_verifier && oauthApp.clientSecret !== client_secret) {
       throw new Error('Invalid client credentials')
     }
 
@@ -147,6 +147,10 @@ router.post('/token', async function (req, res, next) {
     }
 
     const authToken = await oauthService.fetchAuthToken(client_id, code)
+
+    if (code_verifier && authToken.codeVerifier !== code_verifier) {
+      throw new Error('Invalid code verifier')
+    }
 
     if (!authToken) {
       throw new Error('Invalid code')

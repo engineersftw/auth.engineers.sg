@@ -31,10 +31,11 @@ class OauthService {
       })
   }
 
-  async createAuthToken (app, userId) {
+  async createAuthToken (app, userId, codeVerifier = '') {
     return db.AuthToken.create({
       clientId: app.clientId,
       token: OauthService.generateHash(),
+      codeVerifier: codeVerifier,
       validTill: moment().add(5, 'm'),
       userId: userId,
       scope: '',

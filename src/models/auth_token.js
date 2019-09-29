@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     validTill: DataTypes.DATE,
     userId: DataTypes.INTEGER,
     usedOn: DataTypes.DATE,
+    codeVerifier: DataTypes.STRING,
     scope: DataTypes.STRING,
     active: DataTypes.BOOLEAN
   }, {})
