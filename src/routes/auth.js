@@ -125,11 +125,50 @@ router.post('/', async function (req, res, next) {
 })
 
 // Exchange the AuthToken for a JWT Access Token
-router.post('/token', function (req, res, next) {
+router.post('/token', async function (req, res, next) {
   const { client_id, client_secret, code, redirect_uri } = req.body
 
+  let result = {
+    access_token: '',
+    token_type: 'bearer',
+    expires_in: 3600,
+    scope: 'default'
+  }
 
-  res.json({})
+  try {
+    const oauthApp = await oauthService.fetchApp(client_id)
+
+    if (oauthApp.clientSecret !== client_secret) {
+      throw new Error('Invalid client credentials')
+    }
+
+    if (!redirect_uri || oauthApp.redirectUri !== redirect_uri) {
+      throw new Error('Invalid redirect URI')
+    }
+
+    const authToken = await oauthService.fetchAuthToken(client_id, code)
+
+    if (!authToken) {
+      throw new Error('Invalid code')
+    }
+
+    const user = await authToken.getUser()
+    const jwtPayload = {
+      uid: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    }
+
+    result.access_token = oauthService.signJWT(jwtPayload)
+  } catch (err) {
+    result = {
+      errCode: 'Error',
+      message: err.message
+    }
+    res.status(401)
+  }
+
+  res.json(result)
 })
 
 // Email Login action
