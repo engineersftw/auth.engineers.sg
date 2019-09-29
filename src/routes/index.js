@@ -56,7 +56,7 @@ router.get('/', async function (req, res, next) {
       req.session.returnURL = oauthApp.redirectUri
 
       if (state) { req.session.state = state }
-      if (codeVerifier) { req.session.state = codeVerifier }
+      if (codeVerifier) { req.session.codeVerifier = codeVerifier }
       if (scope) { req.session.scope = scope }
     }
   }

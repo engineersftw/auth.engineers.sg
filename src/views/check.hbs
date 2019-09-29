@@ -15,7 +15,7 @@
     const esgAuthStorage = window.localStorage
 
     if (!esgAuthStorage.getItem('jwt-token')) {
-      window.location = '/?errCode=NoLocalSession'
+      window.location = '{{{loginURL}}}'
       return
     }
     const jwtToken = esgAuthStorage.getItem('jwt-token')

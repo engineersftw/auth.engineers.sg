@@ -53,6 +53,12 @@ class OauthService {
       })
   }
 
+  async markAsUsed (authToken) {
+    return authToken.update({
+      usedOn: moment()
+    })
+  }
+
   verifyJWT (token) {
     return jwt.verify(token, this.JWT_SECRET)
   }

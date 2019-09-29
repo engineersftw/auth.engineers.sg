@@ -97,7 +97,7 @@ router.get('/', async function (req, res, next) {
       redirectUri: oauthApp.redirectUri
     }
 
-    result.loginURL += `clientId=${oauthApp.clientId}&redirectUri=${oauthApp.redirectUri}`
+    result.loginURL += `clientId=${oauthApp.clientId}&redirectUri=${oauthApp.redirectUri}&`
 
     if (state) {
       result.oauth.state = state
@@ -179,6 +179,10 @@ router.post('/token', async function (req, res, next) {
       throw new Error('Invalid code')
     }
 
+    if (!authToken.active || authToken.usedOn) {
+      throw new Error('Invalid code')
+    }
+
     if (codeVerifier && authToken.codeVerifier !== codeVerifier) {
       throw new Error('Invalid code verifier')
     }
@@ -189,6 +193,8 @@ router.post('/token', async function (req, res, next) {
       firstName: user.firstName,
       lastName: user.lastName
     }
+
+    await oauthService.markAsUsed(authToken)
 
     result.access_token = oauthService.signJWT(jwtPayload)
   } catch (err) {
