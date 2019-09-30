@@ -14,8 +14,8 @@ jobs:
           POSTGRES_DB: esg_auth_test
     environment:
       NODE_ENV: test
-      POSTGRES_USER: circleci
-      POSTGRES_DB: esg_auth_test
+      PGUSER: circleci
+      PGDATABASE: esg_auth_test
       EXPRESS_SESSION_SECRET: ABCD1234
       PASSPORT_CALLBACK_DOMAIN: http://localhost:3001
       DEFAULT_RETURN_URL: https://engineers.sg
