@@ -8,12 +8,22 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:10.16.3
-        environment:
-          NODE_ENV: test
       - image: circleci/postgres:11-alpine
         environment:
           POSTGRES_USER: circleci
           POSTGRES_DB: esg_auth_test
+    environment:
+      NODE_ENV: test
+      POSTGRES_USER: circleci
+      POSTGRES_DB: esg_auth_test
+      EXPRESS_SESSION_SECRET: ABCD1234
+      PASSPORT_CALLBACK_DOMAIN: http://localhost:3001
+      DEFAULT_RETURN_URL: https://engineers.sg
+      JWT_SECRET: ABCD1234
+      GITHUB_CLIENT_ID: ABCD1234
+      GITHUB_CLIENT_SECRET: ABCD1234
+      TWITTER_CONSUMER_KEY: ABCD1234
+      TWITTER_CONSUMER_SECRET: ABCD1234
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
