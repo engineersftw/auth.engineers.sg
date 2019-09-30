@@ -12,7 +12,7 @@ jobs:
           NODE_ENV: test
       - image: circleci/postgres:11-alpine
         environment:
-          POSTGRES_USER: root
+          POSTGRES_USER: circleci
           POSTGRES_DB: esg_auth_test
 
       # Specify service dependencies here if necessary
