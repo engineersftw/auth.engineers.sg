@@ -59,10 +59,6 @@ app.use('/', indexRouter)
 app.use('/auth', authRouter)
 app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter)
 
-app.get('/debug-sentry', function mainHandler(req, res) {
-  throw new Error('My first Sentry error!')
-})
-
 if (process.env.SENTRY_DSN) {
   app.use(Sentry.Handlers.errorHandler())
 }
