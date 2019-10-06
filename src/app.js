@@ -14,11 +14,10 @@ const usersRouter = require('./routes/users')
 
 const app = express()
 
-if (process.env.NODE_ENV === 'production') {
-  const Sentry = require('@sentry/node')
+const Sentry = require('@sentry/node')
+if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN })
   app.use(Sentry.Handlers.requestHandler())
-  app.use(Sentry.Handlers.errorHandler())
 }
 
 app.set('views', path.join(__dirname, 'views'))
@@ -63,5 +62,9 @@ app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter)
 app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!')
 })
+
+if (process.env.SENTRY_DSN) {
+  app.use(Sentry.Handlers.errorHandler())
+}
 
 module.exports = app
