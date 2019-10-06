@@ -6,14 +6,20 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
 const session = require('express-session')
+const passport = require('./passport')
 
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
 const usersRouter = require('./routes/users')
 
-const passport = require('./passport')
-
 const app = express()
+
+if (process.env.NODE_ENV === 'production') {
+  const Sentry = require('@sentry/node')
+  Sentry.init({ dsn: process.env.SENTRY_DSN })
+  app.use(Sentry.Handlers.requestHandler())
+  app.use(Sentry.Handlers.errorHandler())
+}
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
@@ -53,5 +59,9 @@ if (process.env.NODE_ENV === 'test') {
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
 app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter)
+
+app.get('/debug-sentry', function mainHandler(req, res) {
+  throw new Error('My first Sentry error!')
+})
 
 module.exports = app
