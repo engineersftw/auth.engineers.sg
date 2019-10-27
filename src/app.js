@@ -11,6 +11,7 @@ const passport = require('./passport')
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
 const usersRouter = require('./routes/users')
+const verifyRouter = require('./routes/verify')
 
 const app = express()
 
@@ -57,6 +58,7 @@ if (process.env.NODE_ENV === 'test') {
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
+app.use('/verify', passport.authenticate('jwt', { session: false }), verifyRouter)
 app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter)
 
 if (process.env.SENTRY_DSN) {
