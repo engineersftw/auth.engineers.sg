@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "NODE_ENV=production node ./bin/www",
-    "dev": "NODE_ENV=development PORT=3001 DEBUG=app:* nodemon --ignore '*.test.js' --watch src bin/www",
+    "dev": "NODE_ENV=development DEBUG=app:* nodemon --ignore '*.test.js' --watch src bin/www",
     "test": "jest",
     "test:watch": "jest --watch",
     "jsfmt": "eslint \"src/**/*.js\" --fix",
