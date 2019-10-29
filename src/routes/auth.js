@@ -197,6 +197,7 @@ router.post('/token', async function (req, res, next) {
     await oauthService.markAsUsed(authToken)
 
     result.access_token = oauthService.signJWT(jwtPayload)
+    result.data = jwtPayload
   } catch (err) {
     result = {
       errCode: 'Error',
