@@ -9,7 +9,7 @@ module.exports = {
         clientId: crypto.randomBytes(20).toString('hex'),
         clientSecret: crypto.randomBytes(20).toString('hex'),
         active: true,
-        redirectUri: 'https://cms.engineers.sg',
+        redirectUri: 'https://cms.engineers.sg/auth/callback',
         createdAt: new Date(),
         updatedAt: new Date()
       }], {});
