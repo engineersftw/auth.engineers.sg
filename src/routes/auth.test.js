@@ -69,7 +69,7 @@ describe('/auth endpoints', () => {
         .expect(200)
         .then(response => {
           expect(response.body.access_token.length).toBeGreaterThan(0)
-          expect(Object.keys(response.body)).toEqual(['access_token', 'token_type', 'expires_in', 'scope'])
+          expect(Object.keys(response.body)).toEqual(['access_token', 'token_type', 'expires_in', 'scope', 'data'])
 
           const jwtPayload = oauthService.verifyJWT(response.body.access_token)
           expect(jwtPayload.uid).toEqual(newUser.id)
@@ -94,7 +94,7 @@ describe('/auth endpoints', () => {
         .expect(200)
         .then(response => {
           expect(response.body.access_token.length).toBeGreaterThan(0)
-          expect(Object.keys(response.body)).toEqual(['access_token', 'token_type', 'expires_in', 'scope'])
+          expect(Object.keys(response.body)).toEqual(['access_token', 'token_type', 'expires_in', 'scope', 'data'])
 
           const jwtPayload = oauthService.verifyJWT(response.body.access_token)
           expect(jwtPayload.uid).toEqual(newUser.id)
