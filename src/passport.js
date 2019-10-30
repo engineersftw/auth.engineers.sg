@@ -37,7 +37,7 @@ passport.use(new GitHubStrategy({
   callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/github/callback`
 },
 async function (accessToken, refreshToken, profile, cb) {
-  const [user, err] = await db.User.findOrCreate({
+  const [user, err] = await db.User.findOrBuild({
     where: {
       githubProfileId: profile.id
     }
@@ -68,7 +68,7 @@ passport.use(new TwitterStrategy({
   callbackURL: `${process.env.PASSPORT_CALLBACK_DOMAIN}/auth/twitter/callback`
 },
 async function (token, tokenSecret, profile, cb) {
-  const [user, err] = await db.User.findOrCreate({
+  const [user, err] = await db.User.findOrBuild({
     where: {
       twitterProfileId: profile.id
     }
