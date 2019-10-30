@@ -12,8 +12,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return Promise.all([
-      queryInterface.removeColumn('AuthTokens', 'codeVerifier', { transaction: t })
-  ])
+    return queryInterface.removeColumn('AuthTokens', 'codeVerifier')
   }
 };
