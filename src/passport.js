@@ -49,7 +49,8 @@ async function (accessToken, refreshToken, profile, cb) {
 
   await user.update({
     email: profile.emails[0].value,
-    firstName: profile.displayName
+    firstName: profile.displayName,
+    githubProfileId: profile.id
   })
 
   const jwtPayload = {
@@ -80,7 +81,8 @@ async function (token, tokenSecret, profile, cb) {
 
   await user.update({
     email: `${profile.username}@twitter-user.engineers.sg`,
-    firstName: profile.displayName
+    firstName: profile.displayName,
+    twitterProfileId: profile.id
   })
 
   const jwtPayload = {
