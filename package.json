@@ -42,7 +42,7 @@
     "passport-twitter": "^1.0.4",
     "pg": "^7.12.0",
     "pg-hstore": "^2.3.3",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "sequelize": "^5.19.0",
     "sequelize-cli": "^5.5.0"
   },
